@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { breezyApi } from "./api";
+import { supabase } from "./api";
 
 interface SortOption {
   column: string;
@@ -27,7 +27,7 @@ const supabaseBaseQuery =
   async ({ url, method, body, params }: RequestOptions) => {
     try {
       let result;
-      const query = breezyApi.from(url);
+      const query = supabase.from(url);
 
       switch (method) {
         case "GET": {

@@ -1,10 +1,11 @@
 import AuthLayout from "@/components/layout/AuthLayout";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import Home from "@/pages/Home";
+import Home from "@/pages/Test";
 import Login from "@/pages/Login";
 import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import Test from "@/pages/Test";
 
 // Auth guard for protected routes
 // const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -22,11 +23,12 @@ export default function AppRoutes() {
     <Suspense fallback={<div>Loading...</div>}>
       <ModeToggle />
       <Routes>
-        {/* <Route element={<AuthLayout />}>
+        <Route element={<AuthLayout />}>
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Button>Sign Up</Button>} />
-        </Route> */}
+        </Route>
         <Route path='/' element={<Home />} />
+        <Route path='/test' element={<Test />} />
         <Route path='*' element={<Button>Not Found</Button>} />
       </Routes>
     </Suspense>
