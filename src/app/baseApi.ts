@@ -1,21 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { breezyApi } from "./api";
+
+interface SortOption {
+  column: string;
+  ascending?: boolean;
+}
+
+interface QueryParams {
+  select?: string;
+  sort?: SortOption | SortOption[] | string;
+  orderBy?: string;
+  ascending?: boolean;
+  match?: Record<string, unknown>;
+}
+
+interface RequestOptions {
+  url: string; // table name
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+  body?: Record<string, unknown>;
+  params?: QueryParams;
+}
 
 // Custom baseQuery that works with Supabase
 const supabaseBaseQuery =
   () =>
-  async ({
-    url,
-    method,
-    body,
-    params,
-  }: {
-    url: string; // table name
-    method: "GET" | "POST" | "PATCH" | "DELETE";
-    body?: any;
-    params?: any;
-  }) => {
+  async ({ url, method, body, params }: RequestOptions) => {
     try {
       let result;
       const query = breezyApi.from(url);
@@ -28,7 +37,7 @@ const supabaseBaseQuery =
           if (params?.sort) {
             // Handle array of sort configurations
             if (Array.isArray(params.sort)) {
-              params.sort.forEach((sortOption: any) => {
+              params.sort.forEach((sortOption: SortOption) => {
                 const { column, ascending = false } = sortOption;
                 if (column) {
                   queryBuilder = queryBuilder.order(column, { ascending });
@@ -37,7 +46,7 @@ const supabaseBaseQuery =
             }
             // Handle single sort configuration
             else if (typeof params.sort === "object") {
-              const { column, ascending = false } = params.sort;
+              const { column, ascending = false } = params.sort as SortOption;
               if (column) {
                 queryBuilder = queryBuilder.order(column, { ascending });
               }
@@ -71,10 +80,12 @@ const supabaseBaseQuery =
           break;
         }
         case "POST":
-          result = await query.insert(body);
+          result = await query.insert(body as Record<string, unknown>);
           break;
         case "PATCH":
-          result = await query.update(body).match(params?.match || {});
+          result = await query
+            .update(body as Record<string, unknown>)
+            .match(params?.match || {});
           break;
         case "DELETE":
           result = await query.delete().match(params?.match || {});
