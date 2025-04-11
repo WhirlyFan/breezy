@@ -8,7 +8,7 @@ export const postsApi = baseApi.injectEndpoints({
         url: "posts",
         method: "GET",
         params: {
-          orderBy: "created_at",
+          sort: { column: "created_at", ascending: false },
         },
       }),
       providesTags: ["Posts"],
